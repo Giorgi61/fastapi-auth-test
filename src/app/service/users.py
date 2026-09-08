@@ -1,16 +1,16 @@
 from pydantic import BaseModel
 
 from app.repository.users import UserRepository
-from app.schemas.services.users import UserServiceSchema
+from app.schemas.services.user_post_common import UserPostServiceSchema
 from app.service.base import BaseService
 from app.service.protocols import PasswordHasherProtocol
 
 
 class UserService[Repo: UserRepository, CanHash: PasswordHasherProtocol](BaseService):
-	PModel = BaseModel
-	PSchema = type[UserServiceSchema]
 
-	_schema = UserServiceSchema
+	PSchema = type[UserPostServiceSchema]
+
+	_schema: PSchema = UserPostServiceSchema
 
 
 	def __init__(self, repo: Repo, hasher: CanHash) -> None:
@@ -18,7 +18,7 @@ class UserService[Repo: UserRepository, CanHash: PasswordHasherProtocol](BaseSer
 		self._hasher = hasher
 
 
-	async def create_user(self, data: dict):
+	async def create_user(self, data: dict) -> PSchema:
 
 		password = data.pop('password')
 

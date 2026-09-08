@@ -13,7 +13,7 @@ class HasId(Protocol):
 	id: int
 
 
-class BaseRepository[T: type[DeclarativeBase, HasId], S: BaseWhereSpecification]:
+class BaseRepository[T: type[DeclarativeBase, HasId], S: BaseWhereSpecification, D: dict]:
 	__tablename__ = "base"
 
 	_selectin_relationships: list[str] = []
@@ -57,7 +57,7 @@ class BaseRepository[T: type[DeclarativeBase, HasId], S: BaseWhereSpecification]
 		await self._session.refresh(orm_object,
 		                            attribute_names=self._selectin_relationships + self._joined_relationships)
 
-	async def create[P: dict](self, items: P) -> T:
+	async def create(self, items: D) -> T:
 
 		orm_object = self._model(**items)
 
@@ -66,6 +66,19 @@ class BaseRepository[T: type[DeclarativeBase, HasId], S: BaseWhereSpecification]
 		await self._refresh_obj(orm_object)
 
 		return orm_object
+
+	async def update_obj(self, id_: int, data: D) -> T:
+
+		orm_object = await self._session.get(self._model, id_)
+
+		for attr, value in data.items():
+			setattr(orm_object, attr, value)
+
+		await self._session.commit()
+		await self._refresh_obj(orm_object)
+		return orm_object
+
+
 
 	async def delete_obj(self, _id: int) -> int | None:
 
@@ -89,7 +102,7 @@ class BaseRepository[T: type[DeclarativeBase, HasId], S: BaseWhereSpecification]
 
 		return query
 
-	async def select_model(self, specs: S | None = None) -> Sequence[T]:
+	async def select_model(self, *, specs: S | None = None, skip: int =0, total: int =0 ) -> Sequence[T]:
 
 		query = select(self._model)
 
@@ -98,6 +111,15 @@ class BaseRepository[T: type[DeclarativeBase, HasId], S: BaseWhereSpecification]
 
 		query = self.load_all(query)
 
+		query = query.offset(skip)
+
+
+		if total:
+			limit = skip + total
+			query = query.limit(limit)
+
+
 		res = await self._session.execute(query)
+
 
 		return res.scalars().all()

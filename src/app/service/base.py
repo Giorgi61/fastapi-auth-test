@@ -20,9 +20,16 @@ class BaseService[Repo: BaseRepository, PModel: BaseModel, PSchema: BaseServiceS
 		obj = await self._repo.create(items)
 		return self._schema.model_validate(obj)
 
-	async def select_all(self) -> list[PSchema]:
 
-		res = await self._repo.select_model()
+	async def update(self, _id: int, data: dict) -> PSchema:
+
+		obj = await self._repo.update_obj(_id, data)
+
+		return self._schema.model_validate(obj)
+
+	async def select_all(self, skip: int=0, total: int=0) -> list[PSchema]:
+
+		res = await self._repo.select_model(skip=skip, total=total)
 
 		return [self._schema.model_validate(item) for item in res]
 
