@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy.orm import Mapped, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, Str50, Str200
 
@@ -16,7 +16,7 @@ class User(Base):
 
     name: Mapped[Str50]
     lastname: Mapped[Str50]
-    email: Mapped[Str50]
+    email: Mapped[Str50] = mapped_column(unique=True)
     hashed_password: Mapped[Str200]
 
     posts: Mapped[list[Post]] = relationship(

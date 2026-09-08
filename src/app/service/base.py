@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
-from app.schemas.services.base import BaseServiceSchema
 from app.repository.base import BaseRepository
+from app.schemas.services.base import BaseServiceSchema
 
 
 class BaseService[Repo: BaseRepository, PModel: BaseModel, PSchema: BaseServiceSchema]:
@@ -18,7 +18,7 @@ class BaseService[Repo: BaseRepository, PModel: BaseModel, PSchema: BaseServiceS
 
 
 		obj = await self._repo.create(items)
-		return self._schema(obj)
+		return self._schema.model_validate(obj)
 
 	async def select_all(self) -> list[PSchema]:
 

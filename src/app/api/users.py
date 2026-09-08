@@ -1,18 +1,18 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
-from fastapi import status
+from fastapi import APIRouter, Depends, status
+from starlette.exceptions import HTTPException
 
+from app.schemas.api.users import UserCreate, UserResponseWithId
 from app.service.dependencies import get_user_service
 from app.service.users import UserService
 
-from app.schemas.api.users import UserCreate
 router = APIRouter()
 
 UService =  Annotated[UserService, Depends(get_user_service)]
 
-@router.get("", )
-async def get_all_users(user_serv: UService):
+@router.get("", response_model=list[UserResponseWithId])
+async def get_all_users(user_serv: UService, ):
 
     return await user_serv.select_all()
 
@@ -20,4 +20,9 @@ async def get_all_users(user_serv: UService):
 async def create_user(user_info: UserCreate, user_serv: UService):
 
     data = user_info.model_dump()
-    return await user_serv.create_user(data)
+    try:
+        return await user_serv.create_user(data)
+
+    except Exception:
+
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Unmeted requirements!')

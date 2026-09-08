@@ -1,8 +1,8 @@
 from pathlib import Path
 
 from pydantic import SecretStr, model_validator
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
 from app.core.utils import get_project_root
 
 ROOT_DIR = get_project_root()

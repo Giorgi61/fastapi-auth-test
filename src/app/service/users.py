@@ -1,9 +1,10 @@
-from pydantic import BaseModel, SecretStr
+from pydantic import BaseModel
 
 from app.repository.users import UserRepository
 from app.schemas.services.users import UserServiceSchema
 from app.service.base import BaseService
 from app.service.protocols import PasswordHasherProtocol
+
 
 class UserService[Repo: UserRepository, CanHash: PasswordHasherProtocol](BaseService):
 	PModel = BaseModel
@@ -16,7 +17,6 @@ class UserService[Repo: UserRepository, CanHash: PasswordHasherProtocol](BaseSer
 		super().__init__(repo)
 		self._hasher = hasher
 
-		pass
 
 	async def create_user(self, data: dict):
 
