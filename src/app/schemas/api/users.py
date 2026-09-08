@@ -12,8 +12,8 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
-	name: str50
-	lastname: str50
+	name: str50 | None = None
+	lastname: str50 | None = None
 	password: password_field | None = None
 
 

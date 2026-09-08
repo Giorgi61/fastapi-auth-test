@@ -1,9 +1,9 @@
 from collections.abc import Sequence
 from typing import Protocol
 
-from sqlalchemy import Select, select
+from sqlalchemy import Select, select, Result
 from sqlalchemy import delete as sa_delete
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import  AsyncSession
 from sqlalchemy.orm import DeclarativeBase, joinedload, selectinload
 
 from app.specification.base import BaseWhereSpecification
@@ -57,6 +57,53 @@ class BaseRepository[T: type[DeclarativeBase, HasId], S: BaseWhereSpecification,
 		await self._session.refresh(orm_object,
 		                            attribute_names=self._selectin_relationships + self._joined_relationships)
 
+
+	def filter_by_specs(self, query: Select[T], specs: S, filters_map=None) -> Select[T]:
+		if not filters_map:
+			filters_map = self._where_filters_map
+
+		specs_dict = specs.model_dump(exclude_none=True)
+
+		for specs_name, val in specs_dict.items():
+			if specs_name in filters_map:
+				query_filter = filters_map[specs_name](self._model, val)
+
+				query = query.where(query_filter)
+
+		return query
+
+
+	async def _select(self, *, specs: S | None = None, skip: int =0, total: int =0) -> Result:
+
+		query = select(self._model)
+
+		if specs is not None:
+			query = self.filter_by_specs(query, specs)
+
+		query = self.load_all(query)
+
+		query = query.offset(skip)
+
+		if total:
+			limit = skip + total
+			query = query.limit(limit)
+
+		return await self._session.execute(query)
+
+
+
+	async def select_model(self, *, specs: S | None = None, skip: int =0, total: int =0 ) -> Sequence[T]:
+
+
+		res =  await self._select(specs=specs, skip=skip, total=total)
+
+		return res.scalars().all()
+
+	async def select_one(self, specs: S | None = None ):
+
+		res = await self._select(specs=specs, total=1)
+		return res.scalar()
+
 	async def create(self, items: D) -> T:
 
 		orm_object = self._model(**items)
@@ -75,8 +122,9 @@ class BaseRepository[T: type[DeclarativeBase, HasId], S: BaseWhereSpecification,
 			setattr(orm_object, attr, value)
 
 		await self._session.commit()
-		await self._refresh_obj(orm_object)
+		orm_object = await self.select_one(specs=BaseWhereSpecification(id_eq=id_))
 		return orm_object
+
 
 
 
@@ -87,39 +135,3 @@ class BaseRepository[T: type[DeclarativeBase, HasId], S: BaseWhereSpecification,
 		        returning(self._model.id))
 
 		return await self._session.scalar(stmt)
-
-	def filter_by_specs(self, query: Select[T], specs: S, filters_map=None) -> Select[T]:
-		if not filters_map:
-			filters_map = self._where_filters_map
-
-		specs_dict = specs.model_dump(exclude_none=True)
-
-		for specs_name, val in specs_dict.items():
-			if specs_name in filters_map:
-				query_filter = filters_map[specs_name](self._model, val)
-
-				query = query.where(query_filter)
-
-		return query
-
-	async def select_model(self, *, specs: S | None = None, skip: int =0, total: int =0 ) -> Sequence[T]:
-
-		query = select(self._model)
-
-		if specs is not None:
-			query = self.filter_by_specs(query, specs)
-
-		query = self.load_all(query)
-
-		query = query.offset(skip)
-
-
-		if total:
-			limit = skip + total
-			query = query.limit(limit)
-
-
-		res = await self._session.execute(query)
-
-
-		return res.scalars().all()

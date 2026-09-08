@@ -24,8 +24,9 @@ class BaseService[Repo: BaseRepository, PModel: BaseModel, PSchema: BaseServiceS
 	async def update(self, _id: int, data: dict) -> PSchema:
 
 		obj = await self._repo.update_obj(_id, data)
+		# return self._schema.model_validate(obj)
+		return obj
 
-		return self._schema.model_validate(obj)
 
 	async def select_all(self, skip: int=0, total: int=0) -> list[PSchema]:
 

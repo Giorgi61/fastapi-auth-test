@@ -35,7 +35,7 @@ async def create_user(user_info: UserCreate, user_serv: UService):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Unmeted requirements!')
 
 
-@router.patch("/{u_id}", response_model=UserResponseWithId)
+@router.patch("/{u_id}", status_code=status.HTTP_200_OK, response_model=UserResponseWithId)
 async def update_user(u_id: int, user_serv: UService, data: UserUpdate):
 
     to_update = data.model_dump(exclude_unset=True)
