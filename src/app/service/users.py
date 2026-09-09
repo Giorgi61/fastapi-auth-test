@@ -1,3 +1,4 @@
+from app.specification.users import UsersWhereSpecification
 from pydantic import BaseModel
 
 from app.repository.users import UserRepository

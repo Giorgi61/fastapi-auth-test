@@ -110,9 +110,9 @@ class BaseRepository[T: type[DeclarativeBase, HasId], S: BaseWhereSpecification,
 
 		self._session.add(orm_object)
 		await self._session.commit()
-		await self._refresh_obj(orm_object)
 
-		return orm_object
+
+		return orm_object.id
 
 	async def update_obj(self, id_: int, data: D) -> T:
 
@@ -122,7 +122,6 @@ class BaseRepository[T: type[DeclarativeBase, HasId], S: BaseWhereSpecification,
 			setattr(orm_object, attr, value)
 
 		await self._session.commit()
-		orm_object = await self.select_one(specs=BaseWhereSpecification(id_eq=id_))
 		return orm_object
 
 
@@ -134,4 +133,9 @@ class BaseRepository[T: type[DeclarativeBase, HasId], S: BaseWhereSpecification,
 		        where(self._model.id == _id).
 		        returning(self._model.id))
 
-		return await self._session.scalar(stmt)
+
+		res =  await self._session.scalar(stmt)
+
+		await self._session.commit()
+
+		return res

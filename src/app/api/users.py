@@ -1,10 +1,10 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
-from fastapi.params import Query
 from starlette.exceptions import HTTPException
 
 from app.schemas.api.users import UserCreate, UserResponseWithId, UserUpdate
+from app.schemas.api.user_post_common import UserResponseWithPostId
 from app.service.dependencies import get_user_service
 from app.service.users import UserService
 
@@ -20,8 +20,12 @@ async def get_all_users(user_serv: UService, skip: int=0, total: int=0 ):
 
 @router.get("/{u_id}", response_model=UserResponseWithId)
 async def get_user(u_id: int, user_serv: UService):
-    pass
+    return await user_serv.select_one(u_id)
 
+
+@router.get('/{u_id}/posts', response_model=UserResponseWithPostId)
+async def get_user_with_post(u_id: int, user_serv: UService):
+    return await user_serv.select_one(u_id)
 
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_user(user_info: UserCreate, user_serv: UService):

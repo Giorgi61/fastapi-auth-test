@@ -3,8 +3,12 @@ from app.repository.base import BaseRepository
 from app.repository.mixins import HasId, RepositoryWhereFilterMixin
 from app.specification.users import UsersWhereSpecification
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 
 class UserRepository[T: type[User, HasId], S: UsersWhereSpecification](RepositoryWhereFilterMixin, BaseRepository):
+
+
 
 
 	_selectin_relationships: list[str] = ['posts']
@@ -14,3 +18,6 @@ class UserRepository[T: type[User, HasId], S: UsersWhereSpecification](Repositor
 	                      "last_name_ilike": lambda model, val: model.lastname.ilike(val),
 	                      }
 
+
+	async def select_paginated_posts(self, ):
+		pass
