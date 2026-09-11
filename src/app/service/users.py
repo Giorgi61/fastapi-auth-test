@@ -28,10 +28,12 @@ class UserService[Repo: UserRepository, CanHash: PasswordHasherProtocol](BaseSer
 		return await self.create(data)
 
 
-	async def get_user(self, user_id: int):
+	async def get_user(self, user_id: int, relationships: bool = False) -> PSchema:
 
-
-		lspec = UserLoadSpecification()
+		if relationships:
+			lspec = UserLoadSpecification()
+		else:
+			lspec = None
 
 		return await self.select_one(user_id, lspec)
 

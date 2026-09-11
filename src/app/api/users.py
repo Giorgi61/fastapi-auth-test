@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
+from fastapi import Query
 from starlette.exceptions import HTTPException
 
 from app.schemas.api.user_post_common import UserResponseWithPostId
@@ -15,12 +16,13 @@ UService =  Annotated[UserService, Depends(get_user_service)]
 @router.get("", response_model=list[UserResponseWithId])
 async def get_all_users(user_serv: UService, skip: int=0, total: int=0 ):
 
-    return await user_serv.select_all(skip, total)
+    return await user_serv.select_all(skip=skip, total=total)
 
 
-@router.get("/{u_id}", response_model=UserResponseWithPostId)
-async def get_user(u_id: int, user_serv: UService):
-    return await user_serv.select_one(u_id)
+@router.get("/{u_id}", response_model=UserResponseWithPostId, response_model_exclude_defaults=True)
+async def get_user(u_id: int, user_serv: UService,
+                   relationships: Annotated[bool, Query(description='if set loads user\'s relationships')]=False):
+    return await user_serv.get_user(u_id, relationships=relationships)
 
 
 @router.get('/{u_id}/posts', response_model=UserResponseWithPostId)
