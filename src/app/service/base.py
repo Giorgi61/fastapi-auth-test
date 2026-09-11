@@ -1,11 +1,10 @@
-from app.specification.base import BaseWhereSpecification
-from pydantic import BaseModel
 
 from app.repository.base import BaseRepository
 from app.schemas.services.base import BaseServiceSchema
+from app.specification.base import BaseLoadSpecification, BaseWhereSpecification
 
 
-class BaseService[Repo: BaseRepository, PModel: BaseModel, PSchema: BaseServiceSchema]:
+class BaseService[Repo: BaseRepository, PSchema: BaseServiceSchema]:
 
 	_schema: PSchema =  type[PSchema]
 
@@ -14,12 +13,12 @@ class BaseService[Repo: BaseRepository, PModel: BaseModel, PSchema: BaseServiceS
 
 
 
-	async def select_one(self, id_: int) -> PSchema:
+	async def select_one(self, id_: int, lspec: BaseLoadSpecification | None = None) -> PSchema:
 
-		specs = BaseWhereSpecification(id_eq=id_)
-		return await self._repo.select_one(specs=specs)
+		wspec = BaseWhereSpecification(id_eq=id_)
+		return await self._repo.select_one(wspec=wspec, lspec=lspec)
 
-	async def select_all(self, skip: int=0, total: int=0) -> list[PSchema]:
+	async def select_all(self, lspec: BaseLoadSpecification | None = None, skip: int=0, total: int=0) -> list[PSchema]:
 
 		res = await self._repo.select_model(skip=skip, total=total)
 

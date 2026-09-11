@@ -1,8 +1,9 @@
 from typing import Annotated
 
+from fastapi import APIRouter, Depends
+
 from app.service.dependencies import get_post_service
 from app.service.posts import PostService
-from fastapi import APIRouter, Depends
 
 router = APIRouter()
 

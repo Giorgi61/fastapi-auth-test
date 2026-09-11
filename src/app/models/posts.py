@@ -21,4 +21,4 @@ class Post(Base):
         ForeignKey("users.id", ondelete="CASCADE")
     )
 
-    author: Mapped[User] = relationship("User", back_populates="posts")
+    author: Mapped[User] = relationship("User", back_populates="posts", lazy="noload")

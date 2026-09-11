@@ -14,3 +14,7 @@ class BaseWhereSpecification(BaseModel):
 	updated_at_lt: datetime | None = None
 
 
+class BaseLoadSpecification(BaseModel):
+
+	selectinload: list[str] = []
+	joinedload: list[str] = []

@@ -20,5 +20,5 @@ class User(Base):
     hashed_password: Mapped[Str200]
 
     posts: Mapped[list[Post]] = relationship(
-        "Post", back_populates="author", cascade="all, delete-orphan"
+        "Post", back_populates="author", cascade="all, delete-orphan", lazy="noload"
     )

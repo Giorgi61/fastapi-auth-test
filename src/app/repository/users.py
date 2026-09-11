@@ -1,9 +1,8 @@
+
 from app.models.users import User
 from app.repository.base import BaseRepository
 from app.repository.mixins import HasId, RepositoryWhereFilterMixin
 from app.specification.users import UsersWhereSpecification
-
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UserRepository[T: type[User, HasId], S: UsersWhereSpecification](RepositoryWhereFilterMixin, BaseRepository):
