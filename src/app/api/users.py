@@ -6,12 +6,10 @@ from starlette.exceptions import HTTPException
 
 from app.schemas.api.user_post_common import UserResponseWithPostId
 from app.schemas.api.users import UserCreate, UserResponseWithId, UserUpdate
-from app.service.dependencies import get_user_service
-from app.service.users import UserService
+from app.api.dependencies import UService
 
 router = APIRouter()
 
-UService =  Annotated[UserService, Depends(get_user_service)]
 
 @router.get("", response_model=list[UserResponseWithId])
 async def get_all_users(user_serv: UService, skip: int=0, total: int=0 ):

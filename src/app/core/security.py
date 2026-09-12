@@ -7,7 +7,6 @@ from app.core.config import settings
 
 
 class PasswordHasher:
-
 	pwd_hash = PasswordHash.recommended()
 
 	@classmethod
@@ -17,7 +16,6 @@ class PasswordHasher:
 	@classmethod
 	def verify_password(cls, password: str, hashed_password: str) -> bool:
 		return cls.pwd_hash.verify(password, hashed_password)
-
 
 
 class TokenFactory:
@@ -34,7 +32,7 @@ class TokenFactory:
 		return encoded_jwt
 
 	@staticmethod
-	def verify_token(token: str) -> dict | bool :
+	def verify_token(token: str) -> dict | bool:
 
 		try:
 			payload = jwt.decode(token, settings.SECRET_KEY, algorithms=settings.ALGORITHM)
@@ -45,4 +43,3 @@ class TokenFactory:
 
 		else:
 			return payload
-
