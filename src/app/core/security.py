@@ -26,16 +26,16 @@ class TokenFactory:
 		if expires_delta:
 			expire = datetime.now(UTC) + expires_delta
 		else:
-			expire = datetime.now(UTC) + timedelta(minutes=15)
+			expire = datetime.now(UTC) + timedelta(settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 		to_encode.update({"exp": expire})
-		encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+		encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY.get_secret_value(), algorithm=settings.ALGORITHM)
 		return encoded_jwt
 
 	@staticmethod
 	def verify_token(token: str) -> dict | bool:
 
 		try:
-			payload = jwt.decode(token, settings.SECRET_KEY, algorithms=settings.ALGORITHM)
+			payload = jwt.decode(token, settings.SECRET_KEY.get_secret_value(), algorithms=settings.ALGORITHM)
 
 		except jwt.InvalidTokenError:
 

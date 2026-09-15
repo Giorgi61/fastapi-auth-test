@@ -2,7 +2,7 @@ import app.service.dependencies as service_deps
 
 from app.schemas.services.user_post_common import UserPostServiceSchema
 from fastapi import Depends
-from fastapi.security.oauth2 import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated
 
 PService = Annotated[service_deps.PostService, Depends(service_deps.get_post_service)]
@@ -10,7 +10,7 @@ UService =  Annotated[service_deps.UserService, Depends(service_deps.get_user_se
 AuthService = Annotated[service_deps.AuthService, Depends(service_deps.get_auth_service)]
 
 TokenJWT = Annotated[str, OAuth2PasswordBearer(tokenUrl='auth/login')]
-
+LoginForm = Annotated[OAuth2PasswordRequestForm, Depends()]
 
 async def get_current_user(auth_serv: AuthService, user_serv: UService, token: TokenJWT, rels=False) -> UserPostServiceSchema:
 

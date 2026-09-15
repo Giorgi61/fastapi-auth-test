@@ -29,7 +29,7 @@ class AuthService[CanHash: PasswordHasherProtocol, UserService: UserServiceProto
 
 
 
-	async def login_for_access_token(self, username: str, password: str):
+	async def login_for_access_token(self, username: str, password: str) -> str:
 
 		exp = InvalidCredentialsError('Invalid email or password')
 
