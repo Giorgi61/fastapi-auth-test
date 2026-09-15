@@ -1,8 +1,8 @@
-from app.specification.users import UserLoadSpecification, UsersWhereSpecification
 from app.repository.users import UserRepository
 from app.schemas.services.user_post_common import UserPostServiceSchema
 from app.service.base import BaseService
 from app.service.protocols import PasswordHasherProtocol
+from app.specification.users import UserLoadSpecification, UsersWhereSpecification
 
 
 class UserService[Repo: UserRepository, CanHash: PasswordHasherProtocol](BaseService):

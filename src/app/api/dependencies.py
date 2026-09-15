@@ -1,9 +1,10 @@
-import app.service.dependencies as service_deps
+from typing import Annotated
 
-from app.schemas.services.user_post_common import UserPostServiceSchema
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from typing import Annotated
+
+import app.service.dependencies as service_deps
+from app.schemas.services.user_post_common import UserPostServiceSchema
 
 PService = Annotated[service_deps.PostService, Depends(service_deps.get_post_service)]
 UService =  Annotated[service_deps.UserService, Depends(service_deps.get_user_service)]
@@ -12,12 +13,18 @@ AuthService = Annotated[service_deps.AuthService, Depends(service_deps.get_auth_
 TokenJWT = Annotated[str, OAuth2PasswordBearer(tokenUrl='auth/login')]
 LoginForm = Annotated[OAuth2PasswordRequestForm, Depends()]
 
-async def get_current_user(auth_serv: AuthService, user_serv: UService, token: TokenJWT, rels=False) -> UserPostServiceSchema:
 
+async def get_current_user_id(auth_serv: AuthService, token: TokenJWT) -> int:
 	payload = await auth_serv.authenticate_by_access_token(token)
 
-	u_id = int(payload['sub'])
-	return await user_serv.get_user(int(u_id), relationships=rels)
+	return int(payload['sub'])
+
+CurrentUId = Annotated[int, Depends(get_current_user_id)]
+
+async def get_current_user( user_id: CurrentUId, user_serv: UService, rels=False) -> UserPostServiceSchema:
 
 
-current_user = Depends(get_current_user)
+	return await user_serv.get_user(int(user_id), relationships=rels)
+
+CurrentUser = Annotated[UserPostServiceSchema, Depends(get_current_user)]
+

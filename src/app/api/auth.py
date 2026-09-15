@@ -1,6 +1,8 @@
 from fastapi import APIRouter
-from app.api.dependencies import LoginForm, AuthService
+
+from app.api.dependencies import AuthService, LoginForm
 from app.schemas.api.token import Token
+
 router = APIRouter()
 
 

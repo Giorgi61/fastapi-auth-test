@@ -1,4 +1,9 @@
-from app.service.protocols import UserServiceProtocol,  PasswordHasherProtocol, TokenServiceProtocol
+from app.service.protocols import (
+	PasswordHasherProtocol,
+	TokenServiceProtocol,
+	UserServiceProtocol,
+)
+
 
 class InvalidCredentialsError(Exception):
 	pass
@@ -23,6 +28,8 @@ class AuthService[CanHash: PasswordHasherProtocol, UserService: UserServiceProto
 
 		if not (payload):
 			raise JWTExpiredError('JWT token is expired')
+
+
 
 		return payload
 

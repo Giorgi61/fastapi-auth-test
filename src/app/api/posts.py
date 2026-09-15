@@ -1,10 +1,9 @@
-from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
 from app.api.dependencies import PService
-from app.service.posts import PostService
-from app.schemas.api.posts import PostWitIdResponse, CreatePost
+from app.schemas.api.posts import CreatePost, PostWitIdResponse
+
 router = APIRouter()
 
 
