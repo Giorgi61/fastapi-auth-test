@@ -17,7 +17,7 @@ class AuthService[CanHash: PasswordHasherProtocol, UserService: UserServiceProto
 
 
 
-	async def authenticate_by_access_token(self, token: str):
+	async def authenticate_by_access_token(self, token: str) -> dict:
 
 		payload = self._token.verify_token(token)
 
@@ -38,7 +38,7 @@ class AuthService[CanHash: PasswordHasherProtocol, UserService: UserServiceProto
 		if not obj or not self._hasher.verify_password(password, obj.hashed_password) :
 			raise exp
 
-		payload = {'sub': obj.id}
+		payload = {'sub': str(obj.id)}
 
 		return self._token.create_access_token(data=payload)
 
