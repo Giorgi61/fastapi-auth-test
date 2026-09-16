@@ -3,7 +3,11 @@ from typing import Annotated
 from fastapi import APIRouter, Query, status
 from starlette.exceptions import HTTPException
 
-from app.api.dependencies import UService, CurrentUId, CurrentUser
+from app.api.dependencies import (
+    CurrentUser,
+    UService,
+    ValidUserId,
+)
 from app.schemas.api.user_post_common import UserResponseWithPostId
 from app.schemas.api.users import UserCreate, UserResponseWithId, UserUpdate
 
@@ -25,8 +29,9 @@ async def get_user(u_id: int, user_serv: UService,
     return await user_serv.get_user(u_id, relationships=relationships)
 
 @router.get('/{u_id}/posts', response_model=UserResponseWithPostId)
-async def get_user_with_post(u_id: int, user_serv: UService):
-    return await user_serv.select_one(u_id)
+async def get_user_with_post(u_id: ValidUserId, user_serv: UService):
+
+    return await user_serv.get_user(u_id, relationships=True )
 
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_user(user_info: UserCreate, user_serv: UService):
@@ -41,8 +46,9 @@ async def create_user(user_info: UserCreate, user_serv: UService):
 
 
 @router.patch("/{u_id}", status_code=status.HTTP_200_OK, response_model=UserResponseWithId)
-async def update_user(u_id: int, user_serv: UService, data: UserUpdate):
+async def update_user(u_id: ValidUserId, user_serv: UService, data: UserUpdate):
 
     to_update = data.model_dump(exclude_unset=True)
 
     return await user_serv.update(u_id, to_update)
+

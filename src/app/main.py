@@ -1,7 +1,9 @@
 from fastapi import FastAPI
+from starlette.middleware.sessions import SessionMiddleware
 
 import app.api as routes
 import app.models  #noqa
+from app.core.config import settings
 from app.core.database import AsyncDB, db
 
 
@@ -13,6 +15,7 @@ class MainApp:
 app_fastapi = MainApp(db).app
 
 app_fastapi.include_router(routes.routers)
+app_fastapi.add_middleware(SessionMiddleware, secret_key=settings.OAUTH_SECRET_KEY.get_secret_value())
 
 
 

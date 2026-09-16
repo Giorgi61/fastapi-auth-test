@@ -1,3 +1,4 @@
+import secrets
 from datetime import UTC, datetime, timedelta
 
 import jwt
@@ -16,6 +17,11 @@ class PasswordHasher:
 	@classmethod
 	def verify_password(cls, password: str, hashed_password: str) -> bool:
 		return cls.pwd_hash.verify(password, hashed_password)
+
+	@classmethod
+	def generate_random_password(cls) -> str:
+		return secrets.token_hex(16)
+
 
 
 class TokenFactory:

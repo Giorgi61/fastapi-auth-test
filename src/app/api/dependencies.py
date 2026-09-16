@@ -1,7 +1,8 @@
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from starlette.exceptions import HTTPException
 
 import app.service.dependencies as service_deps
 from app.schemas.services.user_post_common import UserPostServiceSchema
@@ -10,7 +11,7 @@ PService = Annotated[service_deps.PostService, Depends(service_deps.get_post_ser
 UService =  Annotated[service_deps.UserService, Depends(service_deps.get_user_service)]
 AuthService = Annotated[service_deps.AuthService, Depends(service_deps.get_auth_service)]
 
-TokenJWT = Annotated[str, OAuth2PasswordBearer(tokenUrl='auth/login')]
+TokenJWT = Annotated[str, Depends(OAuth2PasswordBearer(tokenUrl='auth/login'))]
 LoginForm = Annotated[OAuth2PasswordRequestForm, Depends()]
 
 
@@ -28,3 +29,13 @@ async def get_current_user( user_id: CurrentUId, user_serv: UService, rels=False
 
 CurrentUser = Annotated[UserPostServiceSchema, Depends(get_current_user)]
 
+
+async def validate_user_access(u_id: int, curr_u_id: CurrentUId) -> int:
+
+	if u_id != curr_u_id:
+		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+	return u_id
+
+
+ValidUserId = Annotated[int, Depends(validate_user_access)]

@@ -14,20 +14,26 @@ class PasswordHasherProtocol(Protocol):
 	def verify_password(cls, password: str, hashed_password: str) -> bool:
 		pass
 
+	@classmethod
+	def generate_random_password(cls) -> str:
+		pass
+
 
 class UserServiceProtocol(Protocol):
 
-	async def find_by_mail(self, mail) -> type[BaseModel] | None:
+	async def find_by_mail(self, mail) -> BaseModel | None:
 		pass
 
-	async def select_one(self, id_: int) -> type[BaseModel] | None:
+	async def select_one(self, id_: int) -> BaseModel | None:
 		pass
 
+	async def create_user(self, data: dict) -> BaseModel:
+		pass
 
 class TokenServiceProtocol(Protocol):
 
 	@staticmethod
-	def create_access_token(data: dict, expires_delta: timedelta | None = None):
+	def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
 		pass
 
 	@staticmethod

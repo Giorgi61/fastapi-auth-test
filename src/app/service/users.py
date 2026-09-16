@@ -41,7 +41,7 @@ class UserService[Repo: UserRepository, CanHash: PasswordHasherProtocol](BaseSer
 
 
 
-	async def find_by_mail(self, mail) -> PSchema:
+	async def find_by_mail(self, mail) -> PSchema | None:
 
 		wspec = UsersWhereSpecification(email_ilike=mail)
 		return await self.select_one_by(wspec)

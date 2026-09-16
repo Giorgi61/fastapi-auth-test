@@ -24,6 +24,13 @@ class Settings(BaseSettings):
 
 	DB_URI: str | None  = None
 
+	OAUTH_SECRET_KEY: SecretStr
+	GOOGLE_CLIENT_ID: SecretStr
+	GOOGLE_CLIENT_SECRET: SecretStr
+
+
+	GOOGLE_SERVER_METADATA_URL: str
+	GOOGLE_SCOPE: str = "openid email profile"
 	@model_validator(mode='after')
 	def create_db_uri(self):
 
