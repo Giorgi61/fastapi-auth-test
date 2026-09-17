@@ -48,7 +48,6 @@ starting the server.
 Create a `.env` file in the project root:
 
 ```bash
-env example:
 SECRET_KEY=your-secret-key
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
@@ -61,6 +60,7 @@ GOOGLE_SERVER_METADATA_URL=https://accounts.google.com/.well-known/openid-config
 GOOGLE_SCOPE=openid email profile
 
 OAUTH_SECRET_KEY=your-oauth-secret-key
+```
 
 ## Project status
 
