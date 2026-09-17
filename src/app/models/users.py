@@ -22,3 +22,4 @@ class User(Base):
     posts: Mapped[list[Post]] = relationship(
         "Post", back_populates="author", cascade="all, delete-orphan", lazy="noload"
     )
+

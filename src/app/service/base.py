@@ -12,15 +12,18 @@ class BaseService[Repo: BaseRepository, PSchema: BaseServiceSchema]:
 		self._repo = repo
 
 
+	async def select_one_by(self, wspec: BaseWhereSpecification | None = None,
+	                        lspec: BaseLoadSpecification | None = None ):
+		return await self._repo.select_one(wspec=wspec, lspec=lspec)
 
 	async def select_one(self, id_: int, lspec: BaseLoadSpecification | None = None) -> PSchema:
 
 		wspec = BaseWhereSpecification(id_eq=id_)
-		return await self._repo.select_one(wspec=wspec, lspec=lspec)
+		return await self.select_one_by(wspec=wspec, lspec=lspec)
 
 	async def select_all(self, lspec: BaseLoadSpecification | None = None, skip: int=0, total: int=0) -> list[PSchema]:
 
-		res = await self._repo.select_model(skip=skip, total=total)
+		res = await self._repo.select_model(lspec=lspec, skip=skip, total=total)
 
 		return [self._schema.model_validate(item) for item in res]
 
@@ -37,8 +40,8 @@ class BaseService[Repo: BaseRepository, PSchema: BaseServiceSchema]:
 
 		obj = await self.select_one(_id)
 
-		# return self._schema.model_validate(obj)
-		return obj
+		return self._schema.model_validate(obj)
+
 
 	async def create(self, items: dict) -> PSchema:
 
