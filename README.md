@@ -40,6 +40,28 @@ Database
 
 Authentication and security-related functionality is separated into dedicated services and abstractions.
 
+## Configuration
+
+The application requires environment variables to be configured before
+starting the server.
+
+Create a `.env` file in the project root:
+
+```bash
+env example:
+SECRET_KEY=your-secret-key
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+DB_PARAMS=sqlite+aiosqlite:///./database.db
+
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_SERVER_METADATA_URL=https://accounts.google.com/.well-known/openid-configuration
+GOOGLE_SCOPE=openid email profile
+
+OAUTH_SECRET_KEY=your-oauth-secret-key
+
 ## Project status
 
 The core functionality is implemented, but this repository should be considered a **learning sandbox**, not a production-ready application.
@@ -61,3 +83,15 @@ The main goal of the project was not to build a complete product, but to underst
 * Authlib
 * uv
 * Ruff
+
+## What I would improve
+
+If I were turning this sandbox into a production project, I would:
+
+- simplify some of the generic abstractions;
+- tighten the type annotations;
+- introduce a more explicit error-handling strategy for authentication;
+- improve test coverage;
+- separate OAuth provider logic more cleanly;
+- add production deployment configuration;
+- review database and transaction handling.
