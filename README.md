@@ -1,13 +1,13 @@
 # FastAPI Auth Test
 
-A learning-oriented **FastAPI backend sandbox** focused on authentication, dependency injection, SQLAlchemy 2.0, service/repository architecture, and modern Python typing.
+A learning-oriented **FastAPI backend sandbox** for exploring authentication, dependency injection, asynchronous SQLAlchemy, layered architecture, generic repositories, specifications, OAuth 2.0, and modern Python typing.
 
 > **Status:** personal learning project / experimental sandbox.  
 > This repository is intentionally not presented as a production-ready application.
 
 ## 🎯 Purpose
 
-The project was built as a testing ground for exploring how the layers of a backend application can interact:
+This project is a practical sandbox for understanding how the main layers of a backend application fit together:
 
 - HTTP/API layer
 - FastAPI dependency injection
@@ -17,13 +17,14 @@ The project was built as a testing ground for exploring how the layers of a back
 - Pydantic schemas
 - authentication and OAuth
 - configuration and database access
+- asynchronous programming
 
 Some abstractions are intentionally more complex than necessary. The goal was to **learn and experiment with architectural ideas**, not to optimize the codebase for production use.
 
-## ✨ What I explored
+## ✨ What the project explores
 
-- FastAPI dependency injection
-- REST API design
+- FastAPI and REST API design
+- FastAPI dependency injection with `Annotated` and `Depends`
 - Async SQLAlchemy 2.0
 - Repository and Service layers
 - Generic repositories
@@ -36,7 +37,7 @@ Some abstractions are intentionally more complex than necessary. The goal was to
 - Authentication service abstractions and `Protocol`
 - Async database access
 - Project configuration with `pydantic-settings`
-- Modern Python type annotations and generics
+- Modern Python generics and type annotations
 
 ## 🏗️ Architecture
 
@@ -70,7 +71,7 @@ The application roughly follows this flow:
                  └───────┬───────┘
                          │
                          ▼
-                      Database
+                    SQLite
 ```
 
 Authentication is separated into its own service and security abstractions. FastAPI dependencies are used to compose services and resolve the current authenticated user.
