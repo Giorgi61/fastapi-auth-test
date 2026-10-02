@@ -16,11 +16,15 @@ class Settings(BaseSettings):
 
     PROJECT_ROOT: str | Path = ROOT_DIR
 
+    # App settings
+    SECRET_KEY: SecretStr
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
-    SECRET_KEY: SecretStr
+    APP_HOST: str = "127.0.0.1"
+    APP_PORT: int = 8000
 
+    # Database settings
     DB_DRIVER: str
     DB_USER: str
     DB_PASSWORD: str
@@ -30,6 +34,7 @@ class Settings(BaseSettings):
 
     DB_URL: str | None = None
 
+    # Google OAuth settings
     OAUTH_SECRET_KEY: SecretStr
     GOOGLE_CLIENT_ID: SecretStr
     GOOGLE_CLIENT_SECRET: SecretStr
@@ -40,9 +45,8 @@ class Settings(BaseSettings):
     @field_validator("GOOGLE_SCOPE", mode="after")
     @classmethod
     def strip_scope(cls, scope) -> str:
-        print(scope)
+
         return scope.strip('"')
-        print(scope)
 
     @model_validator(mode="after")
     def build_db_url(self) -> Settings:

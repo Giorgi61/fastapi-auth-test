@@ -1,3 +1,5 @@
+import sys
+
 from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 
@@ -24,8 +26,15 @@ app_fastapi.add_middleware(
 def main():
     import uvicorn
 
-    uvicorn.run("app.main:app_fastapi", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(
+        "app.main:app_fastapi",
+        host=settings.APP_HOST,
+        port=settings.APP_PORT,
+        reload=True,
+    )
 
 
 if __name__ == "__main__":
+    print(f"HOST={settings.APP_HOST!r}", file=sys.stderr)
+    print(f"PORT={settings.APP_PORT!r}", file=sys.stderr)
     main()
