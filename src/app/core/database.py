@@ -18,10 +18,12 @@ class AsyncDB:
 
         self._engine = create_async_engine(db_url)
 
-        self._session_factory = async_sessionmaker(self._engine,
-                                                   class_=AsyncSession,
-                                                   autoflush=False,
-                                                   expire_on_commit=False, )
+        self._session_factory = async_sessionmaker(
+            self._engine,
+            class_=AsyncSession,
+            autoflush=False,
+            expire_on_commit=False,
+        )
 
         self._orm = orm
 
@@ -38,4 +40,5 @@ class AsyncDB:
         async with self._session_factory() as session:
             yield session
 
-db = AsyncDB(settings.DB_URI)
+
+db = AsyncDB(settings.DB_URL)
