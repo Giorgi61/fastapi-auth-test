@@ -42,6 +42,8 @@ Some abstractions are intentionally more complex than necessary. The goal is to 
 - Project configuration with `pydantic-settings`
 - Environment-based configuration
 - Docker image construction with a non-root application user
+- Docker Compose orchestration for the FastAPI app and PostgreSQL services
+- PostgreSQL health checks, service startup ordering, a dedicated bridge network, and a named database volume
 - `uv` dependency management inside the container
 - Modern Python generics and type annotations
 
@@ -224,6 +226,46 @@ The dependency installation is split into layers so that the dependency layer ca
 
 The `.dockerignore` excludes local virtual environments, Python cache files, Git metadata, and the local `.env` file from the build context.
 
+### Docker Compose
+
+The root-level `compose.yml` defines two services:
+
+- **`app`** — builds the FastAPI image from the repository's `Dockerfile`, reads application settings from `.env`, and publishes port `8000` on the host.
+- **`postgres`** — runs `postgres:16-alpine`, reads the database name/user/password from environment variables, and persists database files in the named `postgres-data` volume.
+
+The application waits for PostgreSQL's health check to pass before starting. Both services share the `app-network` bridge network; the database is reachable from the application using `db` (or `database`) as its hostname. When running through Compose, set `DB_HOST=db` in `.env` rather than `localhost`.
+
+#### Run with Docker Compose
+
+1. Create a `.env` file in the repository root. Include the application settings shown in the [Configuration](#️-configuration) section, and set the database connection values for the Compose network:
+
+   ```env
+   DB_DRIVER=postgresql+psycopg
+   DB_HOST=db
+   DB_PORT=5432
+   DB_NAME=your-db-name
+   DB_USER=your-db-user
+   DB_PASSWORD=your-db-password
+   ```
+
+   Use the same `DB_NAME`, `DB_USER`, and `DB_PASSWORD` values for the PostgreSQL service and the application's database connection. Keep secrets local; do not commit `.env`.
+
+2. Build the image and start both services:
+
+   ```bash
+   docker compose up --build
+   ```
+
+3. Open the API documentation at [http://localhost:8000/docs](http://localhost:8000/docs).
+
+To stop the services, press `Ctrl+C` and run:
+
+```bash
+docker compose down
+```
+
+The named `postgres-data` volume is preserved when you run `docker compose down`. To also delete the database volume and its stored data, use `docker compose down --volumes`.
+
 ## ⚙️ Configuration
 
 The application loads configuration from a `.env` file through `pydantic-settings`.
@@ -280,7 +322,7 @@ Install dependencies:
 uv sync
 ```
 
-Make sure a PostgreSQL instance is available and configure the database variables in `.env`.
+Make sure a PostgreSQL instance is available and configure the database variables in `.env`. Alternatively, use the [Docker Compose setup](#docker-compose) to start the application and PostgreSQL together.
 
 ## ▶️ Running the application
 
@@ -366,6 +408,7 @@ fastapi-auth-test/
 ├── .dockerignore
 ├── .env.example
 ├── Dockerfile
+├── compose.yml
 ├── LICENSE
 ├── README.md
 ├── pyproject.toml
