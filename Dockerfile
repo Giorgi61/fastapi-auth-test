@@ -9,6 +9,7 @@ RUN addgroup -S fastapi_user && adduser -S -G fastapi_user  \
 
 RUN mkdir /project && chown fastapi_user:fastapi_user /project
 
+
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 WORKDIR /project
 
